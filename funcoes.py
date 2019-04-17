@@ -144,31 +144,27 @@ def mutacao (populacao, itens, tx_mutacao):
 
 # fazendo competicao 1x1
 def selecao (populacao, mochila, tam_pop):
+    soma_peso = 0
+    soma_valor = 0
+    for ind in populacao:
+        # acha peso total e valor total
+        soma_valor, soma_peso = ind[0][0], ind[0][1]
+    nova_pop = []
+    for ind in populacao:
+        # calcula proporcoes dos individuos em relacao ao total
+        rateP = ind[0][0] / soma_valor
+        # INSERIR AQUI(^ & v) OUTROS TIPOS DE INCENTIVOS OU PUNICOES
+        rateV = (ind[0][1] % mochila) / soma_peso
+        rate = round(((rateP+rateV)/2) * 100)
+        # quanto mais significativo é um individuo, mais ele é colocado para ser selecionado
+        for i in range(rate):
+            nova_pop.append(ind)
+
     populacao_s = []
-    soma=0
-    for ind in populacao:
-        soma += ind[0][0]
-
-    for ind in populacao:
-        ind[0].append(0)
-
+    # seleciona
     while len(populacao_s) < tam_pop:
-        maior = [0, 0]
-        maior_indice = 0
-        for i, ind in enumerate(populacao):
-            if ind[0][2] == 0:
-                if (ind[0][0] > maior[0]):
-                    maior = ind[0]
-                    maior_indice = i
-                tx_infactibilidade = 1
-                if (ind[0][1] > mochila):
-                    tx_infactibilidade = mochila / ind[0][1]
-                selecao = ind[0][0] / populacao [0][0][0] * 100 * tx_infactibilidade
-                ind[0][2]=1
-        if randint(0, 99) <= selecao:
-            populacao_s.append(deepcopy(populacao[maior_indice]))
+        index = randint(0, len(nova_pop)-1)
+        populacao_s.append(nova_pop.pop(index))
 
-    for ind in populacao_s:
-        ind[0].pop()
     return populacao_s
 # fim
